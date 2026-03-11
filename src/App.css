@@ -77,12 +77,12 @@
 @media (max-width: 640px) {
   .app__content-row {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
   }
 
   .app__sidebar {
     width: 100%;
-    max-width: 320px;
+    max-width: none;
     margin-top: 0;
     order: 1;
   }
@@ -90,6 +90,7 @@
   .app__center-column {
     order: 0;
     width: 100%;
+    max-width: none;
   }
 }
 

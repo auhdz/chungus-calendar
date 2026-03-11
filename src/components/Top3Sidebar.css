@@ -8,6 +8,13 @@
     inset 1px 1px 0 rgba(255, 255, 255, 0.05),
     inset -2px -2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .top3-sidebar {
+    width: 100%;
+  }
 }
 
 .top3-sidebar__title {
