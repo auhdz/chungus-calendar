@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import CalendarCard from './CalendarCard';
 import Top3Sidebar from './Top3Sidebar';
 import { getStoredUserId, getUserColor } from '../lib/storage';
@@ -26,9 +26,11 @@ function useDebouncedCallback(fn, delay) {
 
 export default function CalendarPage() {
   const { groupId } = useParams();
+  const navigate = useNavigate();
   const [userId] = useState(() => getStoredUserId());
   const [userName, setUserName] = useState(() => localStorage.getItem('chungus-meet-username') || '');
   const [groupName, setGroupName] = useState('');
+  const [copied, setCopied] = useState(false);
   const [placements, setPlacements] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [panelMinimized, setPanelMinimized] = useState(false);
@@ -179,7 +181,33 @@ export default function CalendarPage() {
           </aside>
           <div className="app__center-column">
             <div className="app__name-row">
-              <span className="app__group-name">{groupName}</span>
+              <div className="app__name-top">
+                <span className="app__group-name">{groupName}</span>
+                <div className="app__name-actions">
+                  <button
+                    type="button"
+                    className="app__action-btn"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      } catch {}
+                    }}
+                    aria-label="Share group link"
+                  >
+                    {copied ? 'Copied!' : 'Share'}
+                  </button>
+                  <button
+                    type="button"
+                    className="app__action-btn"
+                    onClick={() => navigate('/')}
+                    aria-label="Create a new group"
+                  >
+                    + New Group
+                  </button>
+                </div>
+              </div>
               <label className="app__name-label">
                 Your name <span className="app__name-optional">(optional)</span>
               </label>

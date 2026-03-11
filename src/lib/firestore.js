@@ -17,10 +17,22 @@ import { db } from './firebase';
 
 /* ── Groups ── */
 
+export async function isGroupNameTaken(name) {
+  const q = query(
+    collection(db, 'groups'),
+    where('nameLower', '==', name.trim().toLowerCase()),
+  );
+  const snap = await getDocs(q);
+  return !snap.empty;
+}
+
 export async function createGroup(name, userId) {
+  const taken = await isGroupNameTaken(name);
+  if (taken) throw new Error('GROUP_NAME_TAKEN');
   const ref = doc(collection(db, 'groups'));
   await setDoc(ref, {
     name,
+    nameLower: name.trim().toLowerCase(),
     createdBy: userId,
     createdAt: serverTimestamp(),
   });

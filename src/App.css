@@ -94,6 +94,14 @@
   }
 }
 
+.app__name-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
 .app__group-name {
   font-family: 'Cinzel', Georgia, serif;
   font-size: 1rem;
@@ -103,8 +111,36 @@
     0 0 6px rgba(168, 196, 74, 0.4),
     0 1px 2px rgba(0, 0, 0, 0.6);
   letter-spacing: 0.04em;
-  text-align: center;
-  margin-bottom: 2px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app__name-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.app__action-btn {
+  padding: 4px 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #c0c8a0;
+  background: linear-gradient(145deg, #2a3218 0%, #1e2612 100%);
+  border: 2px solid;
+  border-color: #6a4a30 #2a1c10 #2a1c10 #6a4a30;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+
+.app__action-btn:hover {
+  background: linear-gradient(145deg, #353d22 0%, #2a3218 100%);
+  color: #e0e8c0;
 }
 
 .app__name-label {

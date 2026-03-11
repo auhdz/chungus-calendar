@@ -9,19 +9,26 @@ export default function LandingPage() {
   const [creating, setCreating] = useState(false);
   const [createdLink, setCreatedLink] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleCreate = async () => {
     const trimmed = name.trim();
     if (!trimmed || creating) return;
     setCreating(true);
+    setError(null);
     try {
       const userId = getStoredUserId();
       const groupId = await createGroup(trimmed, userId);
       const link = `${window.location.origin}/g/${groupId}`;
       setCreatedLink(link);
     } catch (err) {
-      console.error('Failed to create group', err);
+      if (err.message === 'GROUP_NAME_TAKEN') {
+        setError('That group name is already taken. Try a different one.');
+      } else {
+        setError('Something went wrong. Please try again.');
+        console.error('Failed to create group', err);
+      }
     } finally {
       setCreating(false);
     }
@@ -82,6 +89,7 @@ export default function LandingPage() {
               >
                 {creating ? 'Creating...' : 'Create Chungus Meet'}
               </button>
+              {error && <p className="landing__error">{error}</p>}
             </div>
           ) : (
             <div className="landing__created">
