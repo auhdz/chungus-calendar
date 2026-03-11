@@ -109,7 +109,7 @@ export default function CalendarCard({
             <p className="calendar-card__subtitle">drag and drop a Chungus to a date then pick time</p>
           </header>
 
-          <ChungusPool remaining={remainingChungus} onDragStart={() => {}} onResetAll={onResetAll} />
+          <ChungusPool remaining={remainingChungus} onDragStart={() => {}} onResetAll={onResetAll} onDropChungus={onDropChungus} />
 
           <div className="calendar-card__grid-wrap">
             <div className="calendar-card__weekdays" role="presentation">

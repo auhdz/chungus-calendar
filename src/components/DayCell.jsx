@@ -48,6 +48,7 @@ export default function DayCell({ day, placements = [], isSelected, onSelect, on
       role="button"
       tabIndex={0}
       className={`day-cell ${isSelected ? 'day-cell--selected' : ''}`}
+      data-day={day}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onDragOver={handleDragOver}
