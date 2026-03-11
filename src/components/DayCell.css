@@ -1,0 +1,191 @@
+/* Minecraft inventory slot: dark teal interior, copper/brown beveled frame */
+.day-cell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background:
+    linear-gradient(
+      135deg,
+      #1a2a22 0%,
+      #142218 30%,
+      #0e1a10 60%,
+      #0a1410 100%
+    );
+  border: 3px solid;
+  border-color: #7a5a3a #3a2818 #3a2818 #7a5a3a;
+  box-shadow:
+    inset 1px 1px 0 #8a6a4a,
+    inset -1px -1px 0 #2a1c10,
+    inset 2px 2px 2px rgba(160, 120, 80, 0.15),
+    inset -2px -2px 2px rgba(0, 0, 0, 0.3),
+    0 0 0 1px #2a1c10;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #8a9a6a;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.day-cell:focus {
+  outline: none;
+}
+
+.day-cell:focus-visible {
+  outline: 2px solid #5a9cbc;
+  outline-offset: 2px;
+}
+
+.day-cell:hover {
+  border-color: #9a7a5a #4a3828 #4a3828 #9a7a5a;
+  box-shadow:
+    inset 1px 1px 0 #aa8a6a,
+    inset -1px -1px 0 #3a2818,
+    inset 2px 2px 3px rgba(180, 140, 100, 0.2),
+    inset -2px -2px 3px rgba(0, 0, 0, 0.35),
+    0 0 0 1px #3a2818;
+}
+
+.day-cell--drag-over {
+  border-color: #5a9cbc #3a6c8c #3a6c8c #5a9cbc;
+  box-shadow:
+    inset 0 0 12px rgba(90, 156, 188, 0.25),
+    inset 1px 1px 0 rgba(90, 156, 188, 0.3),
+    0 0 0 2px #5a9cbc,
+    0 0 8px rgba(90, 156, 188, 0.4);
+}
+
+.day-cell--empty {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.day-cell--selected {
+  border-color: #5ab8dc #3a8aac #3a8aac #5ab8dc;
+  background: linear-gradient(
+    135deg,
+    #1a2e28 0%,
+    #14261e 50%,
+    #0e1e16 100%
+  );
+  box-shadow:
+    inset 1px 1px 0 rgba(90, 184, 220, 0.3),
+    inset -1px -1px 0 rgba(58, 138, 172, 0.3),
+    inset 0 0 10px rgba(90, 156, 188, 0.2),
+    0 0 0 2px #5a9cbc,
+    0 0 14px rgba(90, 156, 188, 0.5);
+}
+
+.day-cell__number {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  z-index: 2;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  font-size: 0.8rem;
+  color: #8a9a6a;
+}
+
+.day-cell--selected .day-cell__number {
+  color: #b0d0c0;
+  text-shadow:
+    0 0 4px rgba(90, 156, 188, 0.4),
+    0 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Placements can stack; allow hover on each placement for tooltip */
+.day-cell__placements {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.day-cell__placements > * {
+  pointer-events: auto;
+}
+
+/* Original Chungus image with subtle colored overlay (no solid outline) */
+.day-cell__placement {
+  --user-color: #5a9cbc;
+  position: absolute;
+  width: 52%;
+  height: 58%;
+  min-width: 24px;
+  min-height: 26px;
+  max-width: 32px;
+  max-height: 36px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  cursor: default;
+}
+
+.day-cell__placement:hover .day-cell__placement-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.day-cell__chungus-img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Tint only on the Chungus shape: overlay is masked by the same PNG */
+.day-cell__placement-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--user-color);
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 2;
+  -webkit-mask-image: var(--mask-url);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-image: var(--mask-url);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+/* Hover: show who placed it (name or Anonymous) */
+.day-cell__placement-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 4px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #e0e8c0;
+  background: rgba(30, 35, 22, 0.95);
+  border: 1px solid #4a5d28;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
