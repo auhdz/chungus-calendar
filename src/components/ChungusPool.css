@@ -71,6 +71,7 @@
 .chungus-pool__slot--available {
   cursor: grab;
   border-color: #7a5a3a #3a2818 #3a2818 #7a5a3a;
+  touch-action: none;
 }
 
 .chungus-pool__slot--available:active {

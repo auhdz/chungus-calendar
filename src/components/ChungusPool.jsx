@@ -4,6 +4,10 @@ import './ChungusPool.css';
 
 const DRAG_TYPE = 'application/x-chungus-meet';
 
+function preventScroll(e) {
+  e.preventDefault();
+}
+
 export default function ChungusPool({ remaining, onDragStart, onResetAll, onDropChungus }) {
   const total = 5;
   const used = total - remaining;
@@ -56,7 +60,8 @@ export default function ChungusPool({ remaining, onDragStart, onResetAll, onDrop
     ghostRef.current = ghost;
     hoveredCellRef.current = null;
     document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
+    document.documentElement.style.overflow = 'hidden';
+    document.addEventListener('touchmove', preventScroll, { passive: false });
   }, [remaining]);
 
   const handleTouchMove = useCallback((e) => {
@@ -77,8 +82,9 @@ export default function ChungusPool({ remaining, onDragStart, onResetAll, onDrop
   }, [getDayCellAt]);
 
   const handleTouchEnd = useCallback(() => {
+    document.removeEventListener('touchmove', preventScroll);
     document.body.style.overflow = '';
-    document.body.style.touchAction = '';
+    document.documentElement.style.overflow = '';
     if (ghostRef.current) {
       ghostRef.current.remove();
       ghostRef.current = null;
