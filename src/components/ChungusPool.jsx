@@ -55,6 +55,8 @@ export default function ChungusPool({ remaining, onDragStart, onResetAll, onDrop
     document.body.appendChild(ghost);
     ghostRef.current = ghost;
     hoveredCellRef.current = null;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
   }, [remaining]);
 
   const handleTouchMove = useCallback((e) => {
@@ -75,6 +77,8 @@ export default function ChungusPool({ remaining, onDragStart, onResetAll, onDrop
   }, [getDayCellAt]);
 
   const handleTouchEnd = useCallback(() => {
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
     if (ghostRef.current) {
       ghostRef.current.remove();
       ghostRef.current = null;
