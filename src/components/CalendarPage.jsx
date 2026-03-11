@@ -1,0 +1,255 @@
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import CalendarCard from './CalendarCard';
+import Top3Sidebar from './Top3Sidebar';
+import { getStoredUserId, getUserColor } from '../lib/storage';
+import { MAX_CHUNGUS_PER_USER } from '../lib/timeBlocks';
+import {
+  getGroup,
+  addPlacement,
+  updatePlacementTimeBlocks,
+  updatePlacementUserName,
+  deleteAllUserPlacements,
+  deleteUserPlacementsOnDate,
+  subscribeToPlacements,
+} from '../lib/firestore';
+
+function useDebouncedCallback(fn, delay) {
+  const timer = useRef(null);
+  const latest = useRef(fn);
+  latest.current = fn;
+  return useCallback((...args) => {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => latest.current(...args), delay);
+  }, [delay]);
+}
+
+export default function CalendarPage() {
+  const { groupId } = useParams();
+  const [userId] = useState(() => getStoredUserId());
+  const [userName, setUserName] = useState(() => localStorage.getItem('chungus-meet-username') || '');
+  const [groupName, setGroupName] = useState('');
+  const [placements, setPlacements] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [panelMinimized, setPanelMinimized] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+
+  const pendingNameRef = useRef(userName);
+
+  useEffect(() => {
+    let cancelled = false;
+    getGroup(groupId).then((g) => {
+      if (cancelled) return;
+      if (!g) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+      setGroupName(g.name);
+      setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [groupId]);
+
+  useEffect(() => {
+    if (notFound) return;
+    const unsub = subscribeToPlacements(groupId, (next) => {
+      setPlacements(next);
+    });
+    return unsub;
+  }, [groupId, notFound]);
+
+  useEffect(() => {
+    localStorage.setItem('chungus-meet-username', userName);
+    pendingNameRef.current = userName;
+  }, [userName]);
+
+  const myPlacements = placements.filter((p) => p.userId === userId);
+  const remainingChungus = Math.max(0, MAX_CHUNGUS_PER_USER - myPlacements.length);
+
+  const handleDropChungus = useCallback(
+    async (day) => {
+      if (remainingChungus <= 0 || day == null) return;
+      const color = getUserColor(userId);
+      const name = pendingNameRef.current?.trim() || null;
+      await addPlacement(groupId, {
+        date: day,
+        userId,
+        userName: name,
+        color,
+        timeBlockIds: [],
+      });
+      setSelectedDate(day);
+      setPanelMinimized(false);
+    },
+    [remainingChungus, userId, groupId],
+  );
+
+  const myPlacementsOnSelectedDate = selectedDate
+    ? myPlacements.filter((p) => p.date === selectedDate)
+    : [];
+
+  const checkedTimeBlocks = (() => {
+    const out = {};
+    if (selectedDate == null || myPlacementsOnSelectedDate.length === 0) return out;
+    const first = myPlacementsOnSelectedDate[0];
+    (first.timeBlockIds || []).forEach((id) => {
+      out[`${selectedDate}-${id}`] = true;
+    });
+    return out;
+  })();
+
+  const handleToggleTimeBlock = useCallback(
+    async (key) => {
+      if (selectedDate == null || myPlacementsOnSelectedDate.length === 0) return;
+      const first = myPlacementsOnSelectedDate[0];
+      const blockId = key.replace(`${selectedDate}-`, '');
+      const current = (first.timeBlockIds || []).includes(blockId);
+      const next = current
+        ? (first.timeBlockIds || []).filter((id) => id !== blockId)
+        : [...(first.timeBlockIds || []), blockId].filter((v, i, a) => a.indexOf(v) === i);
+      await updatePlacementTimeBlocks(groupId, first.id, next);
+    },
+    [selectedDate, myPlacementsOnSelectedDate, groupId],
+  );
+
+  const handleNavigateDay = useCallback((delta) => {
+    setSelectedDate((d) => {
+      if (d == null) return delta > 0 ? 1 : 31;
+      const next = d + delta;
+      if (next < 1) return 1;
+      if (next > 31) return 31;
+      return next;
+    });
+  }, []);
+
+  const handleResetTimes = useCallback(async () => {
+    if (selectedDate == null) return;
+    await deleteUserPlacementsOnDate(groupId, userId, selectedDate);
+  }, [selectedDate, userId, groupId]);
+
+  const handleResetAll = useCallback(async () => {
+    await deleteAllUserPlacements(groupId, userId);
+  }, [userId, groupId]);
+
+  const syncNameToFirestore = useDebouncedCallback(
+    async (trimmed, ids) => {
+      await Promise.all(ids.map((id) => updatePlacementUserName(groupId, id, trimmed)));
+    },
+    500,
+  );
+
+  const handleNameChange = useCallback(
+    (newName) => {
+      setUserName(newName);
+      const trimmed = newName.trim() || null;
+      syncNameToFirestore(trimmed, myPlacements.map((p) => p.id));
+    },
+    [myPlacements, groupId, syncNameToFirestore],
+  );
+
+  if (loading) {
+    return (
+      <div className="app">
+        <main className="app__main">
+          <p style={{ color: '#b8c8a0', marginTop: 80 }}>Loading group...</p>
+        </main>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="app">
+        <main className="app__main">
+          <p style={{ color: '#b8c8a0', marginTop: 80 }}>Group not found. Check your link.</p>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app">
+      <main className="app__main">
+        <div className="app__content-row">
+          <aside className="app__sidebar">
+            <Top3Sidebar placements={placements} />
+          </aside>
+          <div className="app__center-column">
+            <div className="app__name-row">
+              <span className="app__group-name">{groupName}</span>
+              <label className="app__name-label">
+                Your name <span className="app__name-optional">(optional)</span>
+              </label>
+              <div className="app__name-field">
+                <input
+                  type="text"
+                  className="app__name-input"
+                  placeholder="Anonymous"
+                  value={userName}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  maxLength={40}
+                  aria-label="Your name optional"
+                />
+                {userName.trim().length > 0 && (
+                  <span className="app__name-check" aria-label="Name set">✓</span>
+                )}
+              </div>
+            </div>
+            <div className="app__card-wrap">
+              <CalendarCard
+                placements={placements}
+                selectedDate={selectedDate}
+                panelMinimized={panelMinimized}
+                onSelectDate={(day) => {
+                  if (day === selectedDate) {
+                    setPanelMinimized(false);
+                  } else {
+                    setSelectedDate(day);
+                    setPanelMinimized(false);
+                  }
+                }}
+                onTogglePanelMinimized={() => setPanelMinimized((m) => !m)}
+                onNavigateDay={handleNavigateDay}
+                onDropChungus={handleDropChungus}
+                remainingChungus={remainingChungus}
+                checkedTimeBlocks={checkedTimeBlocks}
+                onToggleTimeBlock={handleToggleTimeBlock}
+                onConfirmTimes={() => {
+                  setPanelMinimized(true);
+                  const allHaveTimes = myPlacements.every(
+                    (p) => p.timeBlockIds && p.timeBlockIds.length > 0,
+                  );
+                  if (myPlacements.length >= MAX_CHUNGUS_PER_USER && allHaveTimes) {
+                    setShowCongrats(true);
+                  }
+                }}
+                onResetTimes={handleResetTimes}
+                onResetAll={handleResetAll}
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {showCongrats && (
+        <div className="app__congrats-overlay" onClick={() => setShowCongrats(false)}>
+          <div className="app__congrats-card" onClick={(e) => e.stopPropagation()}>
+            <p className="app__congrats-text">
+              congrats, now check the top times for your chungus meeting
+            </p>
+            <button
+              type="button"
+              className="app__congrats-btn"
+              onClick={() => setShowCongrats(false)}
+            >
+              okay chungus
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -75,12 +75,14 @@ export default function DayCell({ day, placements = [], isSelected, onSelect, on
                 left: `${x}%`,
                 top: `${y}%`,
               }}
-              title={who}
               aria-label={`Placed by ${who}`}
             >
               <img src={chungusImg} alt="" className="day-cell__chungus-img" draggable={false} />
               <span className="day-cell__placement-overlay" aria-hidden />
-              <span className="day-cell__placement-tooltip">{who}</span>
+              <span className="day-cell__placement-tooltip">
+                <span className="day-cell__tooltip-dot" style={{ background: p.color }} />
+                {who}
+              </span>
             </span>
           );
         })}

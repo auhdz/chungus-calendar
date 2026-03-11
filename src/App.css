@@ -94,6 +94,19 @@
   }
 }
 
+.app__group-name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #a8c44a;
+  text-shadow:
+    0 0 6px rgba(168, 196, 74, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.04em;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
 .app__name-label {
   font-size: 0.88rem;
   font-weight: 700;

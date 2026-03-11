@@ -154,7 +154,7 @@
   position: absolute;
   inset: 0;
   background: var(--user-color);
-  opacity: 0.35;
+  opacity: 0.45;
   mix-blend-mode: multiply;
   pointer-events: none;
   z-index: 2;
@@ -188,4 +188,16 @@
   pointer-events: none;
   z-index: 10;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.day-cell__tooltip-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
 }
