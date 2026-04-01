@@ -1,74 +1,83 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import chungusImg from '../assets/Subject.png';
-import { DRAG_TYPE } from './ChungusPool';
 import './DayCell.css';
 
-export default function DayCell({ day, placements = [], isSelected, onSelect, onDrop }) {
-  const isEmpty = day === null;
+export default function DayCell({
+  day,
+  outside = false,
+  placements = [],
+  isSelected,
+  currentUserId,
+  calendarLocked = false,
+  onSelect,
+}) {
+  const isDisabled = outside;
+  const hasMyPlacement = useMemo(
+    () => placements.some((p) => p.userId === currentUserId),
+    [placements, currentUserId],
+  );
+  const showDeselectHint = Boolean(isSelected && hasMyPlacement && !calendarLocked);
 
   const handleClick = useCallback(() => {
-    if (!isEmpty) onSelect?.(day);
-  }, [isEmpty, day, onSelect]);
+    if (isDisabled || calendarLocked) return;
+    onSelect?.(day);
+  }, [isDisabled, calendarLocked, day, onSelect]);
 
   const handleKeyDown = useCallback((e) => {
-    if (isEmpty) return;
+    if (isDisabled || calendarLocked) return;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onSelect?.(day);
     }
-  }, [isEmpty, day, onSelect]);
+  }, [isDisabled, calendarLocked, day, onSelect]);
 
-  const handleDragOver = useCallback((e) => {
-    if (isEmpty) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-    e.currentTarget.classList.add('day-cell--drag-over');
-  }, [isEmpty]);
-
-  const handleDragLeave = useCallback((e) => {
-    if (!e.currentTarget.contains(e.relatedTarget)) {
-      e.currentTarget.classList.remove('day-cell--drag-over');
-    }
-  }, []);
-
-  const handleDrop = useCallback((e) => {
-    e.currentTarget.classList.remove('day-cell--drag-over');
-    if (isEmpty) return;
-    if (!e.dataTransfer.types.includes(DRAG_TYPE)) return;
-    e.preventDefault();
-    onDrop?.(day);
-  }, [isEmpty, day, onDrop]);
-
-  if (isEmpty) {
-    return <div className="day-cell day-cell--empty" aria-hidden />;
+  if (outside) {
+    return (
+      <div className="day-cell day-cell--outside" aria-hidden>
+        <span className="day-cell__number">{day}</span>
+      </div>
+    );
   }
+
+  const titleHint = calendarLocked
+    ? 'Enter your name above first'
+    : showDeselectHint
+      ? 'click to deselect'
+      : undefined;
 
   return (
     <div
       role="button"
-      tabIndex={0}
-      className={`day-cell ${isSelected ? 'day-cell--selected' : ''}`}
+      tabIndex={calendarLocked ? -1 : 0}
+      className={`day-cell ${isSelected ? 'day-cell--selected' : ''} ${calendarLocked ? 'day-cell--locked' : ''}`}
       data-day={day}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
       aria-pressed={isSelected}
-      aria-label={`April ${day}, 2026. ${placements.length} availability. Drop a Chungus or click to set times.`}
+      aria-disabled={calendarLocked}
+      title={titleHint}
+      aria-label={
+        calendarLocked
+          ? `April ${day}, 2026. Calendar locked until you enter your name.`
+          : `April ${day}, 2026. ${placements.length} availability.${showDeselectHint ? ' click to deselect.' : ' Click to place or set times.'}`
+      }
     >
       <span className="day-cell__number">{day}</span>
+      {showDeselectHint && (
+        <span className="day-cell__deselect-hint">click to deselect</span>
+      )}
       <div className="day-cell__placements" aria-hidden>
         {placements.map((p, i) => {
           const offsets = [
             [50, 50], [65, 45], [35, 55], [55, 65], [40, 38], [70, 58],
           ];
           const [x, y] = offsets[i % offsets.length] || [50 + (i % 3) * 15, 50 + Math.floor(i / 3) * 12];
-          const who = p.userName?.trim() || 'Anonymous';
+          const who = p.userName?.trim() || 'Unknown';
+          const mine = p.userId === currentUserId;
           return (
             <span
               key={p.id}
-              className="day-cell__placement"
+              className={`day-cell__placement ${mine ? 'day-cell__placement--mine' : ''}`}
               style={{
                 '--user-color': p.color,
                 '--mask-url': `url(${chungusImg})`,

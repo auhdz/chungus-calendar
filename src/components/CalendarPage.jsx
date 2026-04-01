@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import CalendarCard from './CalendarCard';
 import Top3Sidebar from './Top3Sidebar';
 import { getStoredUserId, getUserColor } from '../lib/storage';
+import { getNextChungusPlaceholder } from '../lib/chungusNames';
 import { MAX_CHUNGUS_PER_USER } from '../lib/timeBlocks';
 import {
   getGroup,
@@ -70,12 +71,29 @@ export default function CalendarPage() {
 
   const myPlacements = placements.filter((p) => p.userId === userId);
   const remainingChungus = Math.max(0, MAX_CHUNGUS_PER_USER - myPlacements.length);
+  const nameReady = userName.trim().length > 0;
+  const namePlaceholder = getNextChungusPlaceholder(placements, userId);
 
-  const handleDropChungus = useCallback(
+  const handleDayClick = useCallback(
     async (day) => {
-      if (remainingChungus <= 0 || day == null) return;
+      if (day == null) return;
+      const name = pendingNameRef.current?.trim();
+      if (!name) return;
+
+      const hasMine = myPlacements.some((p) => p.date === day);
+      if (hasMine) {
+        if (day === selectedDate) {
+          await deleteUserPlacementsOnDate(groupId, userId, day);
+          setSelectedDate(null);
+          setPanelMinimized(false);
+          return;
+        }
+        setSelectedDate(day);
+        setPanelMinimized(false);
+        return;
+      }
+      if (remainingChungus <= 0) return;
       const color = getUserColor(userId);
-      const name = pendingNameRef.current?.trim() || null;
       await addPlacement(groupId, {
         date: day,
         userId,
@@ -86,7 +104,7 @@ export default function CalendarPage() {
       setSelectedDate(day);
       setPanelMinimized(false);
     },
-    [remainingChungus, userId, groupId],
+    [myPlacements, selectedDate, remainingChungus, userId, groupId],
   );
 
   const myPlacementsOnSelectedDate = selectedDate
@@ -105,6 +123,7 @@ export default function CalendarPage() {
 
   const handleToggleTimeBlock = useCallback(
     async (key) => {
+      if (!pendingNameRef.current?.trim()) return;
       if (selectedDate == null || myPlacementsOnSelectedDate.length === 0) return;
       const first = myPlacementsOnSelectedDate[0];
       const blockId = key.replace(`${selectedDate}-`, '');
@@ -146,8 +165,10 @@ export default function CalendarPage() {
   const handleNameChange = useCallback(
     (newName) => {
       setUserName(newName);
-      const trimmed = newName.trim() || null;
-      syncNameToFirestore(trimmed, myPlacements.map((p) => p.id));
+      const trimmed = newName.trim();
+      if (trimmed) {
+        syncNameToFirestore(trimmed, myPlacements.map((p) => p.id));
+      }
     },
     [myPlacements, groupId, syncNameToFirestore],
   );
@@ -209,17 +230,18 @@ export default function CalendarPage() {
                 </div>
               </div>
               <label className="app__name-label">
-                Your name <span className="app__name-optional">(optional)</span>
+                Your name <span className="app__name-hint">(required)</span>
               </label>
               <div className="app__name-field">
                 <input
                   type="text"
                   className="app__name-input"
-                  placeholder="Anonymous"
+                  placeholder={namePlaceholder}
                   value={userName}
                   onChange={(e) => handleNameChange(e.target.value)}
                   maxLength={40}
-                  aria-label="Your name optional"
+                  aria-label="Your name, required to use the calendar"
+                  autoComplete="nickname"
                 />
                 {userName.trim().length > 0 && (
                   <span className="app__name-check" aria-label="Name set">✓</span>
@@ -231,17 +253,11 @@ export default function CalendarPage() {
                 placements={placements}
                 selectedDate={selectedDate}
                 panelMinimized={panelMinimized}
-                onSelectDate={(day) => {
-                  if (day === selectedDate) {
-                    setPanelMinimized(false);
-                  } else {
-                    setSelectedDate(day);
-                    setPanelMinimized(false);
-                  }
-                }}
+                currentUserId={userId}
+                calendarLocked={!nameReady}
+                onDayClick={handleDayClick}
                 onTogglePanelMinimized={() => setPanelMinimized((m) => !m)}
                 onNavigateDay={handleNavigateDay}
-                onDropChungus={handleDropChungus}
                 remainingChungus={remainingChungus}
                 checkedTimeBlocks={checkedTimeBlocks}
                 onToggleTimeBlock={handleToggleTimeBlock}

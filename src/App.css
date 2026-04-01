@@ -71,6 +71,8 @@
   min-width: 0;
   display: flex;
   justify-content: center;
+  position: relative;
+  overflow: visible;
 }
 
 @media (max-width: 640px) {
@@ -148,6 +150,12 @@
 .app__name-optional {
   font-weight: 500;
   color: #a07080;
+}
+
+.app__name-hint {
+  font-weight: 600;
+  font-size: 0.82em;
+  color: #a05068;
 }
 
 .app__name-field {

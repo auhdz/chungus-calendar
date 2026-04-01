@@ -2,7 +2,25 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getStoredUserId } from '../lib/storage';
 import { createGroup } from '../lib/firestore';
+import polaroidOg from '../assets/polaroid-og-chungus.png';
+import polaroidJojo from '../assets/polaroid-jojo-chungus.png';
+import polaroidMega from '../assets/polaroid-mega-chungus.png';
+import polaroidCaptain from '../assets/polaroid-captain-chungus.png';
+import polaroidLegend from '../assets/polaroid-legend-chungus.png';
+import polaroidLord from '../assets/polaroid-lord-chungus.png';
+import polaroidRedemption from '../assets/polaroid-redemption-chungus.png';
+import chungusSticker from '../assets/chungus-sticker.png';
 import './LandingPage.css';
+
+const POLAROIDS = [
+  { src: polaroidOg, caption: 'OG chungus', mod: 'landing__polaroid--1' },
+  { src: polaroidJojo, caption: 'jojo chungus', mod: 'landing__polaroid--2' },
+  { src: polaroidMega, caption: 'mega chungus', mod: 'landing__polaroid--3' },
+  { src: polaroidCaptain, caption: 'captain chungus', mod: 'landing__polaroid--4' },
+  { src: polaroidLegend, caption: 'legend of chungus', mod: 'landing__polaroid--5' },
+  { src: polaroidLord, caption: 'lord of the chungus', mod: 'landing__polaroid--6' },
+  { src: polaroidRedemption, caption: 'chungus redemption', mod: 'landing__polaroid--7' },
+];
 
 export default function LandingPage() {
   const [name, setName] = useState('');
@@ -53,7 +71,27 @@ export default function LandingPage() {
 
   return (
     <div className="landing">
+      <div className="landing__wall" aria-hidden>
+        {POLAROIDS.map(({ src, caption, mod }) => (
+          <div key={mod} className={`landing__polaroid ${mod}`}>
+            <div className="landing__polaroid-frame">
+              <div className="landing__polaroid-photo">
+                <img src={src} alt="" draggable={false} />
+              </div>
+              <p className="landing__polaroid-caption">{caption}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="landing__card">
+        <img
+          src={chungusSticker}
+          alt=""
+          className="landing__card-sticker"
+          draggable={false}
+          aria-hidden
+        />
         <div className="landing__awning">
           <span className="landing__awning-text">Chungus Meet</span>
         </div>

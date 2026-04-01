@@ -40,20 +40,24 @@
     0 2px 6px rgba(180, 90, 120, 0.12);
 }
 
-.day-cell--drag-over {
-  border-color: #d4789c;
-  box-shadow:
-    inset 0 0 8px rgba(212, 120, 156, 0.15),
-    0 0 0 2px #d4789c,
-    0 0 8px rgba(212, 120, 156, 0.25);
-}
-
 .day-cell--empty {
   background: transparent;
   border-color: transparent;
   box-shadow: none;
   cursor: default;
   pointer-events: none;
+}
+
+.day-cell--outside {
+  background: rgba(240, 220, 226, 0.35);
+  border-color: rgba(224, 192, 202, 0.4);
+  box-shadow: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.day-cell--outside .day-cell__number {
+  color: rgba(160, 112, 128, 0.4);
 }
 
 .day-cell--selected {
@@ -63,6 +67,18 @@
     inset 0 0 6px rgba(196, 104, 140, 0.1),
     0 0 0 2px #d4789c,
     0 0 10px rgba(212, 120, 156, 0.2);
+}
+
+.day-cell--locked {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.day-cell--locked:hover {
+  border-color: #e0c0ca;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.8),
+    0 1px 2px rgba(150, 80, 100, 0.08);
 }
 
 .day-cell__number {
@@ -77,6 +93,32 @@
 
 .day-cell--selected .day-cell__number {
   color: #8a4a5a;
+}
+
+.day-cell__deselect-hint {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  translate: -50% 0;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #4a2030;
+  background: transparent;
+  border: none;
+  padding: 0;
+  pointer-events: none;
+  z-index: 20;
+  white-space: nowrap;
+  max-width: min(96%, 10rem);
+  text-align: center;
+  line-height: 1.2;
+  text-shadow:
+    0 0 4px #fff,
+    0 0 8px #fff,
+    0 1px 0 #fff;
+  isolation: isolate;
+  -webkit-font-smoothing: antialiased;
 }
 
 .day-cell__placements {
@@ -106,11 +148,20 @@
   cursor: default;
 }
 
+@media (max-width: 640px) {
+  .day-cell__placement {
+    min-width: 28px;
+    min-height: 30px;
+    max-width: 38px;
+    max-height: 40px;
+  }
+}
+
 .day-cell__placement:hover .day-cell__placement-tooltip {
-  opacity: 1;
   visibility: visible;
 }
 
+/* Outlines only on the image — filters here do not smear sibling tooltip text. */
 .day-cell__chungus-img {
   position: absolute;
   width: 100%;
@@ -118,6 +169,39 @@
   object-fit: contain;
   pointer-events: none;
   z-index: 1;
+  filter:
+    contrast(1.06)
+    drop-shadow(0 0 1px #141414)
+    drop-shadow(0 0 2px var(--user-color))
+    drop-shadow(0 0 4px var(--user-color));
+}
+
+.day-cell__placement--mine .day-cell__chungus-img {
+  filter:
+    contrast(1.08)
+    drop-shadow(0 0 1px #0a0a0a)
+    drop-shadow(0 0 2px #1a1a1a)
+    drop-shadow(0 0 3px var(--user-color))
+    drop-shadow(0 0 6px var(--user-color));
+}
+
+@media (max-width: 640px) {
+  .day-cell__chungus-img {
+    filter:
+      contrast(1.08)
+      drop-shadow(0 0 1.5px #0a0a0a)
+      drop-shadow(0 0 2px #0a0a0a)
+      drop-shadow(0 0 4px var(--user-color))
+      drop-shadow(0 0 6px var(--user-color));
+  }
+
+  .day-cell__placement--mine .day-cell__chungus-img {
+    filter:
+      contrast(1.1)
+      drop-shadow(0 0 2px #000)
+      drop-shadow(0 0 3px var(--user-color))
+      drop-shadow(0 0 8px var(--user-color));
+  }
 }
 
 .day-cell__placement-overlay {
@@ -138,35 +222,42 @@
   mask-position: center;
 }
 
+/* Below avatar so it does not cover the date number; no box — text + halo only. */
 .day-cell__placement-tooltip {
   position: absolute;
-  bottom: 100%;
+  top: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(-4px);
-  padding: 4px 8px;
-  font-size: 0.65rem;
+  translate: -50% 0;
+  margin-top: 2px;
+  padding: 0;
+  font-size: 0.58rem;
   font-weight: 700;
-  color: #5a2838;
-  background: #fff;
-  border: 1px solid #e0c0ca;
-  border-radius: 4px;
+  color: #2a1018;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   white-space: nowrap;
-  opacity: 0;
   visibility: hidden;
-  transition: opacity 0.15s ease, visibility 0.15s ease;
   pointer-events: none;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(100, 40, 60, 0.15);
+  z-index: 15;
+  box-shadow: none;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  line-height: 1.2;
+  -webkit-font-smoothing: antialiased;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 6px #fff,
+    0 1px 1px #fff;
 }
 
 .day-cell__tooltip-dot {
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 2px #fff;
 }

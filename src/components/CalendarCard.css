@@ -1,6 +1,41 @@
 .calendar-card {
   width: 100%;
   position: relative;
+  overflow: visible;
+  z-index: 0;
+}
+
+/* Peek over left/right edge: half on card, half on page gradient */
+.calendar-card__stickers {
+  position: absolute;
+  inset: 0;
+  top: 34px;
+  bottom: 16px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.calendar-card__sticker {
+  position: absolute;
+  width: clamp(56px, 16vw, 96px);
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  filter: drop-shadow(2px 4px 5px rgba(30, 12, 20, 0.22));
+}
+
+.calendar-card__sticker--left {
+  left: 0;
+}
+
+.calendar-card__sticker--right {
+  right: 0;
+}
+
+@media (max-width: 480px) {
+  .calendar-card__sticker {
+    width: clamp(48px, 22vw, 76px);
+  }
 }
 
 /* ===== Top banner ===== */
@@ -75,34 +110,54 @@
   border-left: 1px solid rgba(212, 120, 156, 0.12);
 }
 
-/* ===== Flower decorations ===== */
+/* ===== Sakura row at top ===== */
+.calendar-card__sakura-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 6px 12px 2px;
+  pointer-events: none;
+  position: relative;
+  z-index: 4;
+}
+
+.calendar-card__sakura {
+  font-size: 0.85rem;
+  opacity: 0.55;
+  filter: drop-shadow(0 1px 1px rgba(180, 90, 120, 0.2));
+}
+
+.calendar-card__sakura:nth-child(odd) {
+  transform: rotate(-10deg);
+}
+
+.calendar-card__sakura:nth-child(even) {
+  transform: rotate(12deg);
+  font-size: 0.7rem;
+  opacity: 0.4;
+}
+
+/* ===== Side flower decorations ===== */
 .calendar-card__flower {
   position: absolute;
   pointer-events: none;
   z-index: 4;
   font-size: 0.7rem;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .calendar-card__flower--1 {
-  top: 12px;
-  left: 8px;
-  color: #d4789c;
-  transform: rotate(15deg);
+  bottom: 25%;
+  right: 6px;
+  color: #e8a0b8;
+  transform: rotate(-18deg);
 }
 
 .calendar-card__flower--2 {
-  bottom: 30%;
-  right: 6px;
-  color: #e8a0b8;
-  transform: rotate(-20deg);
-}
-
-.calendar-card__flower--3 {
-  bottom: 15%;
+  bottom: 12%;
   left: 6px;
   color: #c4688c;
-  transform: rotate(8deg);
+  transform: rotate(10deg);
 }
 
 /* ===== Content area ===== */
@@ -142,6 +197,22 @@
 .calendar-card__grid-wrap {
   margin: 0 auto;
   width: 100%;
+}
+
+.calendar-card__lock-notice {
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #7a3048;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(196, 104, 140, 0.35);
+  border-radius: 4px;
+}
+
+.calendar-card__grid-wrap--locked .calendar-card__grid-outer {
+  opacity: 0.88;
 }
 
 .calendar-card__weekdays {
