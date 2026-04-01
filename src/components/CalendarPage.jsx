@@ -119,10 +119,10 @@ export default function CalendarPage() {
 
   const handleNavigateDay = useCallback((delta) => {
     setSelectedDate((d) => {
-      if (d == null) return delta > 0 ? 1 : 31;
+      if (d == null) return delta > 0 ? 1 : 30;
       const next = d + delta;
       if (next < 1) return 1;
-      if (next > 31) return 31;
+      if (next > 30) return 30;
       return next;
     });
   }, []);

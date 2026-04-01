@@ -37,7 +37,7 @@ export default function Top3Sidebar({ placements }) {
       <ul className="top3-sidebar__list">
         {top.map(({ date, blockId, count, label }, i) => (
           <li key={`${date}-${blockId}-${i}`} className="top3-sidebar__item">
-            <span className="top3-sidebar__text">Mar {date} · {label}</span>
+            <span className="top3-sidebar__text">Apr {date} · {label}</span>
             <span className="top3-sidebar__tally">{count}</span>
           </li>
         ))}

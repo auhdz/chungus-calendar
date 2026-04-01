@@ -23,7 +23,7 @@ export default function TimeBlockPanel({
   };
 
   const canGoPrev = selectedDate > 1;
-  const canGoNext = selectedDate < 31;
+  const canGoNext = selectedDate < 30;
 
   return (
     <div className={`time-block-panel ${minimized ? 'time-block-panel--minimized' : ''}`}>
@@ -38,7 +38,7 @@ export default function TimeBlockPanel({
           ←
         </button>
         <span className="time-block-panel__date">
-          March {selectedDate}, 2026
+          April {selectedDate}, 2026
         </span>
         <button
           type="button"

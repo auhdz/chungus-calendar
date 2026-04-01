@@ -55,7 +55,7 @@ export default function DayCell({ day, placements = [], isSelected, onSelect, on
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       aria-pressed={isSelected}
-      aria-label={`March ${day}, 2026. ${placements.length} availability. Drop a Chungus or click to set times.`}
+      aria-label={`April ${day}, 2026. ${placements.length} availability. Drop a Chungus or click to set times.`}
     >
       <span className="day-cell__number">{day}</span>
       <div className="day-cell__placements" aria-hidden>

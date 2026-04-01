@@ -2,12 +2,10 @@
   flex-shrink: 0;
   width: 140px;
   padding: 10px 10px;
-  border: 3px solid #3d4a28;
-  background: linear-gradient(180deg, #3d4a28 0%, #353d22 40%, #2a3218 100%);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.05),
-    inset -2px -2px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
+  border: 2px solid #e0c0ca;
+  background: #fff8fa;
+  box-shadow: 0 2px 8px rgba(150, 80, 100, 0.08);
+  border-radius: 6px;
   box-sizing: border-box;
 }
 
@@ -20,7 +18,7 @@
 .top3-sidebar__title {
   font-size: 0.6rem;
   font-weight: 700;
-  color: #8a9a5c;
+  color: #a07080;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 8px;
@@ -29,7 +27,7 @@
 
 .top3-sidebar__empty {
   font-size: 0.6rem;
-  color: #6a7a4a;
+  color: #c0a0aa;
   text-align: center;
 }
 
@@ -49,15 +47,15 @@
   justify-content: space-between;
   gap: 6px;
   padding: 4px 6px;
-  border: 1px solid #2a3218;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  border: 1px solid #f0dce2;
+  background: rgba(240, 220, 226, 0.3);
+  border-radius: 3px;
 }
 
 .top3-sidebar__text {
   font-size: 0.58rem;
   font-weight: 600;
-  color: #b0c0a0;
+  color: #6a3a4a;
   line-height: 1.2;
   white-space: nowrap;
   flex: 1;
@@ -67,6 +65,6 @@
 .top3-sidebar__tally {
   font-size: 0.7rem;
   font-weight: 800;
-  color: #a8c44a;
+  color: #c4688c;
   flex-shrink: 0;
 }

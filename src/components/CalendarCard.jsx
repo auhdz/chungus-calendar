@@ -5,18 +5,18 @@ import ChungusPool from './ChungusPool';
 import './CalendarCard.css';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MARCH_2026 = new Date(2026, 2, 1);
+const APRIL_2026 = new Date(2026, 3, 1);
 
-function buildMarchGrid() {
-  const start = startOfMonth(MARCH_2026);
-  const end = endOfMonth(MARCH_2026);
+function buildAprilGrid() {
+  const start = startOfMonth(APRIL_2026);
+  const end = endOfMonth(APRIL_2026);
   const weekStart = startOfWeek(start, { weekStartsOn: 0 });
   const weekEnd = endOfWeek(end, { weekStartsOn: 0 });
   const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
-  return days.map((d) => (d.getMonth() === 2 ? d.getDate() : null));
+  return days.map((d) => (d.getMonth() === 3 ? d.getDate() : null));
 }
 
-const MARCH_GRID = buildMarchGrid();
+const APRIL_GRID = buildAprilGrid();
 
 export default function CalendarCard({
   placements,
@@ -36,69 +36,15 @@ export default function CalendarCard({
   const getPlacementsForDay = (day) => (day != null ? (placements || []).filter((p) => p.date === day) : []);
 
   return (
-    <article className="calendar-card" aria-label="Pick a Stupid Chungus Time — March 2026">
+    <article className="calendar-card" aria-label="Pick a Stupid Chungus Time — April 2026">
       <div className="calendar-card__awning">
-        <span className="calendar-card__awning-text">March 2026</span>
-        <span className="calendar-card__chain calendar-card__chain--left" aria-hidden />
-        <span className="calendar-card__chain calendar-card__chain--right" aria-hidden />
+        <span className="calendar-card__awning-text">April 2026</span>
       </div>
 
       <div className="calendar-card__panel">
-        <div className="calendar-card__vine calendar-card__vine--left" aria-hidden>
-          <span className="calendar-card__leaf calendar-card__leaf--1" aria-hidden />
-          <span className="calendar-card__leaf calendar-card__leaf--2" aria-hidden />
-          <span className="calendar-card__leaf calendar-card__leaf--3" aria-hidden />
-          <span className="calendar-card__leaf calendar-card__leaf--4" aria-hidden />
-          <span className="calendar-card__leaf calendar-card__leaf--5" aria-hidden />
-        </div>
-        <div className="calendar-card__vine calendar-card__vine--right" aria-hidden>
-          <span className="calendar-card__leaf calendar-card__leaf--6" aria-hidden />
-          <span className="calendar-card__leaf calendar-card__leaf--7" aria-hidden />
-          <span className="calendar-card__leaf calendar-card__leaf--8" aria-hidden />
-          <span className="calendar-card__leaf calendar-card__leaf--9" aria-hidden />
-        </div>
+        <div className="calendar-card__accent calendar-card__accent--left" aria-hidden />
+        <div className="calendar-card__accent calendar-card__accent--right" aria-hidden />
 
-        {/* Hanging lantern string */}
-        <div className="calendar-card__lantern-string" aria-hidden>
-          <span className="calendar-card__lantern-rope" />
-          <span className="calendar-card__lantern calendar-card__lantern--1">
-            <span className="calendar-card__lantern-chain" />
-            <span className="calendar-card__lantern-body">
-              <span className="calendar-card__lantern-cap" />
-              <span className="calendar-card__lantern-glass" />
-              <span className="calendar-card__lantern-base" />
-            </span>
-          </span>
-          <span className="calendar-card__lantern calendar-card__lantern--2">
-            <span className="calendar-card__lantern-chain" />
-            <span className="calendar-card__lantern-body">
-              <span className="calendar-card__lantern-cap" />
-              <span className="calendar-card__lantern-glass" />
-              <span className="calendar-card__lantern-base" />
-            </span>
-          </span>
-          <span className="calendar-card__lantern calendar-card__lantern--3">
-            <span className="calendar-card__lantern-chain" />
-            <span className="calendar-card__lantern-body">
-              <span className="calendar-card__lantern-cap" />
-              <span className="calendar-card__lantern-glass" />
-              <span className="calendar-card__lantern-base" />
-            </span>
-          </span>
-          <span className="calendar-card__lantern calendar-card__lantern--4">
-            <span className="calendar-card__lantern-chain" />
-            <span className="calendar-card__lantern-body">
-              <span className="calendar-card__lantern-cap" />
-              <span className="calendar-card__lantern-glass" />
-              <span className="calendar-card__lantern-base" />
-            </span>
-          </span>
-        </div>
-
-        {/* Small butterfly decoration */}
-        <span className="calendar-card__butterfly" aria-hidden>🦋</span>
-
-        {/* Small flower decorations */}
         <span className="calendar-card__flower calendar-card__flower--1" aria-hidden>✿</span>
         <span className="calendar-card__flower calendar-card__flower--2" aria-hidden>❀</span>
         <span className="calendar-card__flower calendar-card__flower--3" aria-hidden>✿</span>
@@ -120,8 +66,8 @@ export default function CalendarCard({
               ))}
             </div>
             <div className="calendar-card__grid-outer">
-            <div className="calendar-card__grid" role="grid" aria-label="March 2026">
-              {MARCH_GRID.map((day, i) => (
+            <div className="calendar-card__grid" role="grid" aria-label="April 2026">
+              {APRIL_GRID.map((day, i) => (
                 <DayCell
                   key={i}
                   day={day}
@@ -149,7 +95,7 @@ export default function CalendarCard({
         </div>
       </div>
 
-      <div className="calendar-card__bottom-foliage" aria-hidden />
+      <div className="calendar-card__bottom-strip" aria-hidden />
     </article>
   );
 }
