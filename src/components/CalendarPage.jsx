@@ -201,7 +201,7 @@ export default function CalendarPage() {
             <Top3Sidebar placements={placements} />
           </aside>
           <div className="app__center-column">
-            <div className="app__name-row">
+            <div className={`app__name-row${nameReady ? '' : ' app__name-row--attention'}`}>
               <div className="app__name-top">
                 <span className="app__group-name">{groupName}</span>
                 <div className="app__name-actions">
@@ -232,6 +232,11 @@ export default function CalendarPage() {
               <label className="app__name-label">
                 Your name <span className="app__name-hint">(required)</span>
               </label>
+              {!nameReady && (
+                <p className="app__name-callout" role="status">
+                  Enter your name here first — then you can use the calendar below.
+                </p>
+              )}
               <div className="app__name-field">
                 <input
                   type="text"

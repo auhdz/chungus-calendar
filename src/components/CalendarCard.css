@@ -201,14 +201,43 @@
 
 .calendar-card__lock-notice {
   margin: 0 0 8px;
-  padding: 8px 10px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #7a3048;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #4a1020;
   text-align: center;
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(196, 104, 140, 0.35);
-  border-radius: 4px;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  background: rgba(255, 255, 255, 0.75);
+  border: 2px solid rgba(196, 104, 140, 0.45);
+  border-radius: 6px;
+}
+
+@keyframes calendar-lock-notice-pulse {
+  0%,
+  100% {
+    background: rgba(255, 255, 255, 0.78);
+    border-color: rgba(196, 104, 140, 0.45);
+    box-shadow: 0 0 0 0 rgba(196, 104, 140, 0);
+  }
+  50% {
+    background: rgba(255, 220, 235, 0.97);
+    border-color: #b45a78;
+    box-shadow: 0 0 0 3px rgba(196, 104, 140, 0.2);
+  }
+}
+
+.calendar-card__lock-notice--animate {
+  animation: calendar-lock-notice-pulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-card__lock-notice--animate {
+    animation: none;
+    background: rgba(255, 220, 235, 0.95);
+    border-color: #c4688c;
+    box-shadow: 0 0 0 2px rgba(196, 104, 140, 0.18);
+  }
 }
 
 .calendar-card__grid-wrap--locked .calendar-card__grid-outer {

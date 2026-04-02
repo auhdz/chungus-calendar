@@ -99,7 +99,9 @@ export default function CalendarCard({
 
           <div className={`calendar-card__grid-wrap${calendarLocked ? ' calendar-card__grid-wrap--locked' : ''}`}>
             {calendarLocked && (
-              <p className="calendar-card__lock-notice">Enter your name above to pick dates.</p>
+              <p className="calendar-card__lock-notice calendar-card__lock-notice--animate" role="status">
+                Enter your name above to pick dates.
+              </p>
             )}
             <div className="calendar-card__weekdays" role="presentation">
               {WEEKDAYS.map((label) => (
