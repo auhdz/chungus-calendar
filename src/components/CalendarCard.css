@@ -5,12 +5,15 @@
   z-index: 0;
 }
 
-/* Peek over left/right edge: half on card, half on page gradient */
+/* Anchor to .calendar-card__deck (grid region) so % positions stay stable when time panel appears */
+.calendar-card__deck {
+  position: relative;
+  z-index: 0;
+}
+
 .calendar-card__stickers {
   position: absolute;
   inset: 0;
-  top: 34px;
-  bottom: 16px;
   pointer-events: none;
   z-index: 5;
 }
@@ -71,7 +74,7 @@
 /* ===== Main panel ===== */
 .calendar-card__panel {
   position: relative;
-  padding: 16px 22px 0;
+  padding: 16px 22px 12px;
   background: linear-gradient(180deg, #faf0f4 0%, #f5e5eb 50%, #f0dce2 100%);
   border: 2px solid #d4a0b0;
   border-top: none;
@@ -84,7 +87,7 @@
 
 @media (min-width: 480px) {
   .calendar-card__panel {
-    padding: 18px 26px 0;
+    padding: 18px 26px 12px;
   }
 }
 
@@ -164,7 +167,6 @@
 .calendar-card__content {
   position: relative;
   z-index: 1;
-  padding-bottom: 12px;
 }
 
 /* ===== Header ===== */
