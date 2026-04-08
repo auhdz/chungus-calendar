@@ -1,18 +1,30 @@
 .top3-sidebar {
   flex-shrink: 0;
-  width: 140px;
+  width: 160px;
   padding: 10px 10px;
   border: 2px solid #e0c0ca;
   background: #fff8fa;
   box-shadow: 0 2px 8px rgba(150, 80, 100, 0.08);
   border-radius: 6px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 @media (max-width: 640px) {
   .top3-sidebar {
     width: 100%;
   }
+}
+
+.top3-sidebar__section {
+  min-width: 0;
+}
+
+.top3-sidebar__section--members {
+  padding-top: 10px;
+  border-top: 1px solid rgba(212, 160, 176, 0.45);
 }
 
 .top3-sidebar__title {
@@ -29,6 +41,7 @@
   font-size: 0.6rem;
   color: #c0a0aa;
   text-align: center;
+  line-height: 1.35;
 }
 
 .top3-sidebar__list {
@@ -42,29 +55,83 @@
 
 .top3-sidebar__item {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 4px 6px;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 6px;
   border: 1px solid #f0dce2;
   background: rgba(240, 220, 226, 0.3);
   border-radius: 3px;
+}
+
+.top3-sidebar__item-main {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 6px;
 }
 
 .top3-sidebar__text {
   font-size: 0.58rem;
   font-weight: 600;
   color: #6a3a4a;
-  line-height: 1.2;
-  white-space: nowrap;
+  line-height: 1.25;
   flex: 1;
   min-width: 0;
+  white-space: normal;
 }
 
-.top3-sidebar__tally {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: #c4688c;
+.top3-sidebar__meta {
+  font-size: 0.52rem;
+  font-weight: 600;
+  color: #907080;
+  line-height: 1.35;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+
+.top3-sidebar__meta-sep {
+  color: #c0a8b0;
+  font-weight: 500;
+}
+
+.top3-sidebar__members {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 140px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.top3-sidebar__member {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: #5a3040;
+  line-height: 1.25;
+  padding: 2px 0;
+}
+
+.top3-sidebar__member-dot {
   flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #d4789c;
+  opacity: 0.85;
+}
+
+.top3-sidebar__member-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
