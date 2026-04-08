@@ -1,10 +1,13 @@
 .landing {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
+  padding-top: max(24px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
   overflow-x: hidden;
 }
@@ -107,49 +110,58 @@
 }
 
 @media (max-width: 640px) {
+  .landing {
+    padding-left: max(12px, env(safe-area-inset-left, 12px));
+    padding-right: max(12px, env(safe-area-inset-right, 12px));
+  }
+
   .landing__polaroid-frame {
-    width: clamp(76px, 24vw, 108px);
+    width: clamp(64px, 20vw, 96px);
   }
 
+  /*
+   * Mobile-first: keep polaroids in the top / side “frame” so they are not
+   * hidden behind the vertically centered card (which eats the mid viewport).
+   */
   .landing__polaroid--1 {
-    left: 70%;
-    top: 8%;
-    transform: translate(-50%, 0) rotate(-10deg);
-  }
-
-  .landing__polaroid--2 {
-    left: 28%;
-    top: 12%;
-    transform: translate(-50%, 0) rotate(8deg);
-  }
-
-  .landing__polaroid--3 {
-    left: 22%;
-    top: 40%;
-    transform: translate(-50%, 0) rotate(-5deg);
-  }
-
-  .landing__polaroid--4 {
-    left: 76%;
-    top: 36%;
-    transform: translate(-50%, 0) rotate(6deg);
-  }
-
-  .landing__polaroid--5 {
-    left: 24%;
-    top: 62%;
+    left: 82%;
+    top: max(4%, env(safe-area-inset-top, 4px));
     transform: translate(-50%, 0) rotate(-9deg);
   }
 
-  .landing__polaroid--6 {
-    left: 74%;
-    top: 58%;
+  .landing__polaroid--2 {
+    left: 18%;
+    top: max(5%, env(safe-area-inset-top, 5px));
+    transform: translate(-50%, 0) rotate(9deg);
+  }
+
+  .landing__polaroid--3 {
+    left: 6%;
+    top: 16%;
+    transform: translate(-50%, 0) rotate(-6deg);
+  }
+
+  .landing__polaroid--4 {
+    left: 94%;
+    top: 14%;
     transform: translate(-50%, 0) rotate(7deg);
+  }
+
+  .landing__polaroid--5 {
+    left: 28%;
+    top: 22%;
+    transform: translate(-50%, 0) rotate(-8deg);
+  }
+
+  .landing__polaroid--6 {
+    left: 72%;
+    top: 20%;
+    transform: translate(-50%, 0) rotate(6deg);
   }
 
   .landing__polaroid--7 {
     left: 50%;
-    top: 68%;
+    top: 30%;
     transform: translate(-50%, 0) rotate(2deg);
   }
 }

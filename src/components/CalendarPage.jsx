@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import CalendarCard from './CalendarCard';
 import Top3Sidebar from './Top3Sidebar';
@@ -38,8 +38,11 @@ export default function CalendarPage() {
   const [showCongrats, setShowCongrats] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  /** Placements saved locally until Firestore snapshot includes them (fixes mobile lag before times work). */
+  const [pendingPlacements, setPendingPlacements] = useState([]);
 
   const pendingNameRef = useRef(userName);
+  const timePanelAnchorRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,7 +72,19 @@ export default function CalendarPage() {
     pendingNameRef.current = userName;
   }, [userName]);
 
-  const myPlacements = placements.filter((p) => p.userId === userId);
+  useEffect(() => {
+    setPendingPlacements((prev) =>
+      prev.filter((p) => !placements.some((pl) => pl.id === p.id)),
+    );
+  }, [placements]);
+
+  const displayPlacements = useMemo(() => {
+    const ids = new Set(placements.map((p) => p.id));
+    const extra = pendingPlacements.filter((p) => !ids.has(p.id));
+    return [...placements, ...extra];
+  }, [placements, pendingPlacements]);
+
+  const myPlacements = displayPlacements.filter((p) => p.userId === userId);
   const remainingChungus = Math.max(0, MAX_CHUNGUS_PER_USER - myPlacements.length);
   const nameReady = userName.trim().length > 0;
   const namePlaceholder = getNextChungusPlaceholder(placements, userId);
@@ -84,6 +99,9 @@ export default function CalendarPage() {
       if (hasMine) {
         if (day === selectedDate) {
           await deleteUserPlacementsOnDate(groupId, userId, day);
+          setPendingPlacements((prev) =>
+            prev.filter((p) => !(p.userId === userId && p.date === day)),
+          );
           setSelectedDate(null);
           setPanelMinimized(false);
           return;
@@ -94,15 +112,31 @@ export default function CalendarPage() {
       }
       if (remainingChungus <= 0) return;
       const color = getUserColor(userId);
-      await addPlacement(groupId, {
-        date: day,
-        userId,
-        userName: name,
-        color,
-        timeBlockIds: [],
-      });
       setSelectedDate(day);
       setPanelMinimized(false);
+      try {
+        const placementId = await addPlacement(groupId, {
+          date: day,
+          userId,
+          userName: name,
+          color,
+          timeBlockIds: [],
+        });
+        setPendingPlacements((prev) => [
+          ...prev,
+          {
+            id: placementId,
+            date: day,
+            userId,
+            userName: name,
+            color,
+            timeBlockIds: [],
+          },
+        ]);
+      } catch (err) {
+        console.error('addPlacement failed', err);
+        setSelectedDate((prev) => (prev === day ? null : prev));
+      }
     },
     [myPlacements, selectedDate, remainingChungus, userId, groupId],
   );
@@ -132,6 +166,9 @@ export default function CalendarPage() {
         ? (first.timeBlockIds || []).filter((id) => id !== blockId)
         : [...(first.timeBlockIds || []), blockId].filter((v, i, a) => a.indexOf(v) === i);
       await updatePlacementTimeBlocks(groupId, first.id, next);
+      setPendingPlacements((prev) =>
+        prev.map((p) => (p.id === first.id ? { ...p, timeBlockIds: next } : p)),
+      );
     },
     [selectedDate, myPlacementsOnSelectedDate, groupId],
   );
@@ -149,10 +186,14 @@ export default function CalendarPage() {
   const handleResetTimes = useCallback(async () => {
     if (selectedDate == null) return;
     await deleteUserPlacementsOnDate(groupId, userId, selectedDate);
+    setPendingPlacements((prev) =>
+      prev.filter((p) => !(p.userId === userId && p.date === selectedDate)),
+    );
   }, [selectedDate, userId, groupId]);
 
   const handleResetAll = useCallback(async () => {
     await deleteAllUserPlacements(groupId, userId);
+    setPendingPlacements([]);
   }, [userId, groupId]);
 
   const syncNameToFirestore = useDebouncedCallback(
@@ -172,6 +213,18 @@ export default function CalendarPage() {
     },
     [myPlacements, groupId, syncNameToFirestore],
   );
+
+  useEffect(() => {
+    if (selectedDate == null || panelMinimized) return;
+    const narrow = window.matchMedia('(max-width: 640px)');
+    if (!narrow.matches) return;
+    const el = timePanelAnchorRef.current;
+    if (!el) return;
+    const id = requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [selectedDate, panelMinimized]);
 
   if (loading) {
     return (
@@ -255,9 +308,10 @@ export default function CalendarPage() {
             </div>
             <div className="app__card-wrap">
               <CalendarCard
-                placements={placements}
+                placements={displayPlacements}
                 selectedDate={selectedDate}
                 panelMinimized={panelMinimized}
+                timePanelAnchorRef={timePanelAnchorRef}
                 currentUserId={userId}
                 calendarLocked={!nameReady}
                 onDayClick={handleDayClick}

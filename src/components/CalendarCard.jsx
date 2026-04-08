@@ -35,6 +35,7 @@ export default function CalendarCard({
   placements,
   selectedDate,
   panelMinimized,
+  timePanelAnchorRef,
   currentUserId,
   calendarLocked,
   onDayClick,
@@ -136,6 +137,7 @@ export default function CalendarCard({
         </div>
 
         <TimeBlockPanel
+          anchorRef={timePanelAnchorRef}
           selectedDate={selectedDate}
           minimized={panelMinimized}
           onMinimize={onTogglePanelMinimized}

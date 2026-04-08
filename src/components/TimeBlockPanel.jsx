@@ -3,6 +3,7 @@ import { TIME_BLOCKS_PST } from '../lib/timeBlocks';
 import './TimeBlockPanel.css';
 
 export default function TimeBlockPanel({
+  anchorRef,
   selectedDate,
   minimized,
   onMinimize,
@@ -26,7 +27,10 @@ export default function TimeBlockPanel({
   const canGoNext = selectedDate < 30;
 
   return (
-    <div className={`time-block-panel ${minimized ? 'time-block-panel--minimized' : ''}`}>
+    <div
+      ref={anchorRef}
+      className={`time-block-panel ${minimized ? 'time-block-panel--minimized' : ''}`}
+    >
       <div className="time-block-panel__header">
         <button
           type="button"
